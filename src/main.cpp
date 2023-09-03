@@ -17,18 +17,20 @@ int main() {
     return 2;
   }
 
-  ImGuiLayer::Init(window);
+    ImGuiLayer::Init(window);
 
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     ImGuiLayer::BeginFrame();
+    ImGuiLayer::BeginDockspace();
 
     ImGui::Begin("Window");
 
     ImGui::End();
 
+    ImGuiLayer::EndDockspace();
     ImGuiLayer::EndFrame();
 
     glfwSwapBuffers(window);

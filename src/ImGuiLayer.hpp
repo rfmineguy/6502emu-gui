@@ -8,6 +8,8 @@ namespace ImGuiLayer {
   void Deinit();
   void BeginFrame();
   void EndFrame();
+  void BeginDockspace();
+  void EndDockspace();
 }
 
 #endif

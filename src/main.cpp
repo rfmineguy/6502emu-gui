@@ -3,9 +3,9 @@
 #include <glad/glad.h>
 #include <imgui-src/imgui.h>
 
-#include <iostream>
 #include "ImGuiLayer.hpp"
 #include "WindowUtil.hpp"
+#include "Globals.hpp"
 
 int main() {
   if (!WindowUtil::GLFW_Init()) {
@@ -17,18 +17,20 @@ int main() {
     return 2;
   }
 
-    ImGuiLayer::Init(window);
+  ImGuiLayer::Init(window);
+  Globals::InitCpu("file");
 
   while (!glfwWindowShouldClose(window)) {
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
     ImGuiLayer::BeginFrame();
     ImGuiLayer::BeginDockspace();
+    ImGuiLayer::ShowMenuBar();
 
-    ImGui::Begin("Window");
+    ImGuiLayer::ShowRegisters();
+    ImGuiLayer::ShowWatch();
+    ImGuiLayer::ShowCode();
+    ImGuiLayer::ShowControls();
 
-    ImGui::End();
+    ImGui::ShowDemoWindow();
 
     ImGuiLayer::EndDockspace();
     ImGuiLayer::EndFrame();

@@ -10,6 +10,13 @@ namespace ImGuiLayer {
   void EndFrame();
   void BeginDockspace();
   void EndDockspace();
+  void ShowMenuBar();
+
+  // Acutal UI Rendering
+  void ShowRegisters();
+  void ShowWatch();
+  void ShowCode();
+  void ShowControls();
 }
 
 #endif

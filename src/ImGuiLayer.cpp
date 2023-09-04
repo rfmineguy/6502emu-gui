@@ -2,6 +2,12 @@
 #include <imgui-src/imgui.h>
 #include <imgui-src/backends/imgui_impl_glfw.h>
 #include <imgui-src/backends/imgui_impl_opengl3.h>
+#include <fmt/core.h>
+#include <iostream>
+#include <sstream>
+
+#include <6502emu/cpu.h>
+#include "Globals.hpp"
 
 namespace ImGuiLayer {
   void Init(GLFWwindow* window) {
@@ -79,6 +85,80 @@ namespace ImGuiLayer {
   }
 
   void EndDockspace() {
+    ImGui::End();
+  }
+
+  void ShowMenuBar() {
+    if (ImGui::BeginMenuBar()) {
+      if (ImGui::BeginMenu("File")) {
+        static bool boolean;
+        ImGui::MenuItem("Load Program", NULL, &boolean);
+        ImGui::EndMenu();
+      }
+      ImGui::EndMenuBar();
+    }
+  }
+
+  // Actual UI Rendering
+  void ShowRegisters() {
+    ImGui::Begin("Registers");
+      ImGui::Text("   A: %d", Globals::Instance().cpu.regA);
+      ImGui::Text("   X: %d", Globals::Instance().cpu.regX);
+      ImGui::Text("   Y: %d", Globals::Instance().cpu.regY);
+      ImGui::Separator();
+      ImGui::Text("   Status: 0000-000");
+      ImGui::Text("   N: %d", 0);
+    ImGui::End();
+  }
+  
+  void ShowWatch() {
+    ImGui::Begin("Watch");
+      static std::unordered_map<uint16_t, std::string> watched_addresses;
+
+      static char address_string[5] = {0};
+      bool is_valid = false;
+      ImGui::InputText("addr", address_string, 5, ImGuiInputTextFlags_CharsHexadecimal);
+      ImGui::SameLine();
+      int value;
+      std::stringstream ss;
+      ss << std::hex << address_string;
+      ss >> value;
+
+      if (value >= 0x0 && value <= 0xffff && address_string[0] != 0) {
+        is_valid = true;
+      }
+
+      if (ImGui::Button(is_valid ? "T" : "F") && is_valid) {
+        watched_addresses.emplace(value, "--");
+      }
+
+      uint16_t address_to_remove;
+      bool     should_remove;
+      for (auto& [key, value] : watched_addresses) {
+        ImGui::Text("%4X  : %s", key, value.c_str());
+        ImGui::SameLine();
+        if (ImGui::Button("X")) {
+          address_to_remove = key;
+          should_remove     = true;
+        }
+      }
+      if (should_remove) {
+        auto it = watched_addresses.find(address_to_remove);
+        if (it != watched_addresses.end())
+          watched_addresses.erase(it);
+      }
+    ImGui::End();
+  }
+  
+  void ShowCode() {
+    ImGui::Begin("Code");
+
+    ImGui::End();
+  }
+
+  void ShowControls() {
+    ImGui::Begin("Controls");
+
     ImGui::End();
   }
 }

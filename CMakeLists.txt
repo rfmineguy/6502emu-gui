@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(6502emu_gui LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_WARN_DEPRECATED NO)
 
 include(FetchContent)
 FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TAG 3.3.8)
@@ -17,6 +18,11 @@ FetchContent_MakeAvailable(6502emu)
 
 FetchContent_Declare(nfd GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended.git GIT_TAG v1.1.0)
 FetchContent_MakeAvailable(nfd)
+
+FetchContent_Declare(imgui-memedit GIT_REPOSITORY https://github.com/ocornut/imgui_club.git GIT_TAG main CONFIGURE_COMMAND "" BUILD_COMMAND "")
+if (NOT imgui-memedit_POPULATED)
+  FetchContent_Populate(imgui-memedit)
+endif()
 
 FetchContent_Declare(
   imgui
@@ -37,4 +43,4 @@ endif()
 add_executable(6502emu_gui src/main.cpp src/ImGuiLayer.cpp src/WindowUtil.cpp src/Globals.cpp)
 set_property(TARGET 6502emu_gui PROPERTY CXX_STANDARD 17)
 target_link_libraries(6502emu_gui PRIVATE glfw imgui glad fmt nfd 6502lib)
-target_include_directories(6502emu_gui PRIVATE ${glad_SOURCE_DIR}/include ${glfw_SOURCE_DIR}/include/ ${imgui_SOURCE_DIR}/include ${fmt_SOURCE_DIR}/include/ ${6502emu_SOURCE_DIR}/include ${nfd_SOURCE_DIR}/include)
+target_include_directories(6502emu_gui PRIVATE ${glad_SOURCE_DIR}/include ${glfw_SOURCE_DIR}/include/ ${imgui_SOURCE_DIR}/include ${imgui-memedit_SOURCE_DIR}/imgui_memory_editor/ ${fmt_SOURCE_DIR}/include/ ${6502emu_SOURCE_DIR}/include ${nfd_SOURCE_DIR}/include)

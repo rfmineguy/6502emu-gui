@@ -29,6 +29,7 @@ int main() {
     ImGuiLayer::ShowWatch();
     ImGuiLayer::ShowCode();
     ImGuiLayer::ShowControls();
+    ImGuiLayer::ShowMemEdit();
 
     ImGui::ShowDemoWindow();
 

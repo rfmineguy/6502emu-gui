@@ -17,6 +17,7 @@ namespace ImGuiLayer {
   void ShowWatch();
   void ShowCode();
   void ShowControls();
+  void ShowMemEdit();
 }
 
 #endif

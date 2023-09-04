@@ -2,6 +2,7 @@
 #include <imgui-src/imgui.h>
 #include <imgui-src/backends/imgui_impl_glfw.h>
 #include <imgui-src/backends/imgui_impl_opengl3.h>
+#include <imgui_memory_editor.h>
 #include <fmt/core.h>
 #include <iostream>
 #include <sstream>
@@ -97,11 +98,7 @@ namespace ImGuiLayer {
           nfdresult_t result = NFD::OpenDialog(path);
           if (result == NFD_OKAY) {
             std::cout << "[NFD] Open file: " << path.get() << std::endl;
-            try {
-              // project.Create(path.get());
-            } catch (std::string& err) {
-              std::cerr << "[NFD] Err: " << err << std::endl;
-            }
+            Globals::InitCpu(path.get());
           }
           else if (result == NFD_CANCEL) {
             std::cerr << "[NFD] Canceled" << std::endl;
@@ -130,7 +127,7 @@ namespace ImGuiLayer {
   
   void ShowWatch() {
     ImGui::Begin("Watch");
-      static std::unordered_map<uint16_t, std::string> watched_addresses;
+      static std::unordered_map<uint16_t, uint8_t> watched_addresses;
 
       static char address_string[5] = {0};
       bool is_valid = false;
@@ -146,13 +143,13 @@ namespace ImGuiLayer {
       }
 
       if (ImGui::Button(is_valid ? "T" : "F") && is_valid) {
-        watched_addresses.emplace(value, "--");
+        watched_addresses.emplace(value, Globals::Instance().cpu.memory[value]);
       }
 
       uint16_t address_to_remove;
       bool     should_remove;
       for (auto& [key, value] : watched_addresses) {
-        ImGui::Text("%4X  : %s", key, value.c_str());
+        ImGui::Text("%4X  : %2X", key, value);
         ImGui::SameLine();
         if (ImGui::Button("X")) {
           address_to_remove = key;
@@ -177,5 +174,10 @@ namespace ImGuiLayer {
     ImGui::Begin("Controls");
 
     ImGui::End();
+  }
+
+  void ShowMemEdit() {
+    static MemoryEditor mem;
+    mem.DrawWindow("Memory Editor", Globals::Instance().cpu.memory, 0xffff);
   }
 }

@@ -5,6 +5,7 @@
 #include <fmt/core.h>
 #include <iostream>
 #include <sstream>
+#include <nfd-src/src/include/nfd.hpp>
 
 #include <6502emu/cpu.h>
 #include "Globals.hpp"
@@ -91,8 +92,24 @@ namespace ImGuiLayer {
   void ShowMenuBar() {
     if (ImGui::BeginMenuBar()) {
       if (ImGui::BeginMenu("File")) {
-        static bool boolean;
-        ImGui::MenuItem("Load Program", NULL, &boolean);
+        if (ImGui::MenuItem("Load Program")) {
+          NFD::UniquePath path;
+          nfdresult_t result = NFD::OpenDialog(path);
+          if (result == NFD_OKAY) {
+            std::cout << "[NFD] Open file: " << path.get() << std::endl;
+            try {
+              // project.Create(path.get());
+            } catch (std::string& err) {
+              std::cerr << "[NFD] Err: " << err << std::endl;
+            }
+          }
+          else if (result == NFD_CANCEL) {
+            std::cerr << "[NFD] Canceled" << std::endl;
+          }
+          else {
+            std::cerr << "[NFD] " << NFD_GetError() << std::endl;
+          }
+        }
         ImGui::EndMenu();
       }
       ImGui::EndMenuBar();

@@ -15,6 +15,9 @@ FetchContent_MakeAvailable(fmt)
 FetchContent_Declare(6502emu GIT_REPOSITORY https://github.com/rfmineguy/6502emu.git)
 FetchContent_MakeAvailable(6502emu)
 
+FetchContent_Declare(nfd GIT_REPOSITORY https://github.com/btzy/nativefiledialog-extended.git GIT_TAG v1.1.0)
+FetchContent_MakeAvailable(nfd)
+
 FetchContent_Declare(
   imgui
   GIT_REPOSITORY https://github.com/ocornut/imgui.git
@@ -33,5 +36,5 @@ endif()
 
 add_executable(6502emu_gui src/main.cpp src/ImGuiLayer.cpp src/WindowUtil.cpp src/Globals.cpp)
 set_property(TARGET 6502emu_gui PROPERTY CXX_STANDARD 17)
-target_link_libraries(6502emu_gui PRIVATE glfw imgui glad fmt 6502lib)
-target_include_directories(6502emu_gui PRIVATE ${glad_SOURCE_DIR}/include ${glfw_SOURCE_DIR}/include/ ${imgui_SOURCE_DIR}/include ${fmt_SOURCE_DIR}/include/ ${6502emu_SOURCE_DIR}/include)
+target_link_libraries(6502emu_gui PRIVATE glfw imgui glad fmt nfd 6502lib)
+target_include_directories(6502emu_gui PRIVATE ${glad_SOURCE_DIR}/include ${glfw_SOURCE_DIR}/include/ ${imgui_SOURCE_DIR}/include ${fmt_SOURCE_DIR}/include/ ${6502emu_SOURCE_DIR}/include ${nfd_SOURCE_DIR}/include)

@@ -18,7 +18,7 @@ int main() {
   }
 
   ImGuiLayer::Init(window);
-  Globals::InitCpu("file");
+  // Globals::InitCpu("file");
 
   while (!glfwWindowShouldClose(window)) {
     ImGuiLayer::BeginFrame();

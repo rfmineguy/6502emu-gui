@@ -31,6 +31,8 @@ int main() {
     ImGuiLayer::ShowControls();
     ImGuiLayer::ShowMemEdit();
 
+    ImGuiLayer::ShowDebugInfo();
+
     ImGui::ShowDemoWindow();
 
     ImGuiLayer::EndDockspace();

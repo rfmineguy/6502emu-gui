@@ -166,7 +166,44 @@ namespace ImGuiLayer {
   
   void ShowCode() {
     ImGui::Begin("Code");
+    if (!Globals::Instance().cpu.loaded) {
+      ImGui::Text("Program not loaded");
+      ImGui::End(); 
+      return;
+    } 
 
+    ImGuiListClipper clipper;
+    clipper.Begin(Globals::Instance().instructions.size());
+
+    while (clipper.Step()) {
+      auto it = Globals::Instance().instructions.begin();
+      for (int i = 0; i < clipper.DisplayStart; i++) {
+        it ++;
+      }
+      for (int line = clipper.DisplayStart; line < clipper.DisplayEnd; line++) {
+        if (it != Globals::Instance().instructions.end()) {
+          instruction_t ins = it->second;
+          // ImGui::Text("%02X%02X", ins.address & 0xff00, ins.address & 0x00ff);
+          ImGui::Text("%04X", ins.address);
+          ImGui::SameLine(); ImGui::Text("%s", ins.str);
+        }
+        else {
+          // ...
+        }
+        // it = std::advance(it);
+        it ++;
+      }
+    }
+    clipper.End();
+
+    // for (int i = 0; i < 0xffff; i++) {
+    //   try {
+    //     instruction_t ins = Globals::Instance().instructions.at(i);
+    //     ImGui::Text("%02X%02X", ins.address & 0xff, ins.address & 0xff00);
+    //   } catch (...) {
+    //     ImGui::Text("");
+    //   }
+    // }
     ImGui::End();
   }
 
@@ -179,5 +216,11 @@ namespace ImGuiLayer {
   void ShowMemEdit() {
     static MemoryEditor mem;
     mem.DrawWindow("Memory Editor", Globals::Instance().cpu.memory, 0xffff);
+  }
+
+  void ShowDebugInfo() {
+    ImGui::Begin("Debug");
+    ImGui::Text("%0.4f", 1.0f / ImGui::GetIO().DeltaTime);
+    ImGui::End();
   }
 }

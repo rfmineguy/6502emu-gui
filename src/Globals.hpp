@@ -1,7 +1,7 @@
 #ifndef GLOBALS_HPP
 #define GLOBALS_HPP
 #include <6502emu/cpu.h>
-#include <unordered_map>
+#include <map>
 
 class Globals {
 public:
@@ -17,7 +17,7 @@ public:
 
 public:
   cpu_t cpu;
-  std::unordered_map<uint16_t, instruction_t> instructions;
+  std::map<uint16_t, instruction_t> instructions;
 };
 
 #endif

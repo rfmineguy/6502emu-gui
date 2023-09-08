@@ -18,6 +18,8 @@ namespace ImGuiLayer {
   void ShowCode();
   void ShowControls();
   void ShowMemEdit();
+
+  void ShowDebugInfo();
 }
 
 #endif

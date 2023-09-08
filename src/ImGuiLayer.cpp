@@ -172,6 +172,12 @@ namespace ImGuiLayer {
       return;
     } 
 
+    static char hex[5];
+    if (ImGui::InputText("addr_input", hex, 5, ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_EnterReturnsTrue)) {
+      std::cout << "Submit" << std::endl;
+    }
+    ImGui::Separator();
+
     ImGuiListClipper clipper;
     clipper.Begin(Globals::Instance().instructions.size());
 
@@ -184,7 +190,12 @@ namespace ImGuiLayer {
         if (it != Globals::Instance().instructions.end()) {
           instruction_t ins = it->second;
           // ImGui::Text("%02X%02X", ins.address & 0xff00, ins.address & 0x00ff);
-          ImGui::Text("%04X", ins.address);
+
+          ImGui::PushID(line);
+          ImGui::Checkbox("", (bool*) &it->second.is_bp);
+          ImGui::PopID();
+
+          ImGui::SameLine(); ImGui::Text("%04X", it->first);
           ImGui::SameLine(); ImGui::Text("%s", ins.str);
         }
         else {

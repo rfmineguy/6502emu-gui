@@ -32,4 +32,6 @@ void Globals::InitCpu(const std::string& file) {
   debug_filename += ".dbg";
   Globals::Instance().dbg_info = cc65_read_dbginfo(debug_filename.c_str(), &cc65_err_callback);
   std::cout << "Parsed : " << debug_filename << std::endl;
+
+  cpu_reset(&Globals::Instance().cpu);
 }

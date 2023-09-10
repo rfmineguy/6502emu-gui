@@ -116,9 +116,11 @@ namespace ImGuiLayer {
   // Actual UI Rendering
   void ShowRegisters() {
     ImGui::Begin("Registers");
-      ImGui::Text("   A: %d", Globals::Instance().cpu.regA);
-      ImGui::Text("   X: %d", Globals::Instance().cpu.regX);
-      ImGui::Text("   Y: %d", Globals::Instance().cpu.regY);
+      ImGui::Text("   A: %02X", Globals::Instance().cpu.regA);
+      ImGui::Text("   X: %02X", Globals::Instance().cpu.regX);
+      ImGui::Text("   Y: %02X", Globals::Instance().cpu.regY);
+      ImGui::Separator();
+      ImGui::Text("  PC: %04X", Globals::Instance().cpu.pc);
       ImGui::Separator();
       ImGui::Text("   Status: 0000-000");
       ImGui::Text("   N: %d", 0);
@@ -127,7 +129,7 @@ namespace ImGuiLayer {
   
   void ShowWatch() {
     ImGui::Begin("Watch");
-      static std::unordered_map<uint16_t, uint8_t> watched_addresses;
+      static std::unordered_map<uint16_t, uint8_t*> watched_addresses;
 
       static char address_string[5] = {0};
       bool is_valid = false;
@@ -143,13 +145,13 @@ namespace ImGuiLayer {
       }
 
       if (ImGui::Button(is_valid ? "T" : "F") && is_valid) {
-        watched_addresses.emplace(value, Globals::Instance().cpu.memory[value]);
+        watched_addresses.emplace(value, &Globals::Instance().cpu.memory[value]);
       }
 
       uint16_t address_to_remove;
       bool     should_remove;
       for (auto& [key, value] : watched_addresses) {
-        ImGui::Text("%4X  : %2X", key, value);
+        ImGui::Text("%4X  : %2X", key, *value);
         ImGui::SameLine();
         if (ImGui::Button("X")) {
           address_to_remove = key;
@@ -187,21 +189,21 @@ namespace ImGuiLayer {
         it ++;
       }
       for (int line = clipper.DisplayStart; line < clipper.DisplayEnd; line++) {
+        // whether the address is in a valid segment range
         if (it != Globals::Instance().instructions.end()) {
           instruction_t ins = it->second;
-          // ImGui::Text("%02X%02X", ins.address & 0xff00, ins.address & 0x00ff);
 
           ImGui::PushID(line);
           ImGui::Checkbox("", (bool*) &it->second.is_bp);
           ImGui::PopID();
 
+          if (ins.address == Globals::Instance().cpu.pc)
+            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(160, 40, 40, 255));
           ImGui::SameLine(); ImGui::Text("%04X", it->first);
           ImGui::SameLine(); ImGui::Text("%s", ins.str);
-        }
-        else {
-          // ...
-        }
-        // it = std::advance(it);
+          if (ins.address == Globals::Instance().cpu.pc)
+            ImGui::PopStyleColor();
+        } else { }
         it ++;
       }
     }
@@ -220,6 +222,23 @@ namespace ImGuiLayer {
 
   void ShowControls() {
     ImGui::Begin("Controls");
+    if (!Globals::Instance().cpu.loaded) {
+      ImGui::Text("Program not loaded");
+      ImGui::End();
+      return;
+    }
+
+    if (ImGui::Button("Reset")) {
+      cpu_reset(&Globals::Instance().cpu);
+    }
+    if (ImGui::Button("Step 1")) {
+      instruction_t ins = cpu_step(&Globals::Instance().cpu);
+      cpu_execute(&Globals::Instance().cpu, ins);
+    }
+
+    if (ImGui::Button("Continue")) {
+      // ...
+    }
 
     ImGui::End();
   }

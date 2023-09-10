@@ -21,7 +21,7 @@ namespace WindowUtil {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    GLFWwindow* window = glfwCreateWindow(640, 480, "6502 Emu", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(width, height, "6502 Emu", NULL, NULL);
     if (!window) {
       std::cerr << "Failed to initialize glfw window" << std::endl;
       return nullptr;

@@ -12,13 +12,12 @@ int main() {
     return 1;
   }
 
-  GLFWwindow* window = WindowUtil::CreateWindow("6502 Emu", 600, 600);
+  GLFWwindow* window = WindowUtil::CreateWindow("6502 Emu", 1200, 1200);
   if (!window) {
     return 2;
   }
 
   ImGuiLayer::Init(window);
-  // Globals::InitCpu("file");
 
   while (!glfwWindowShouldClose(window)) {
     ImGuiLayer::BeginFrame();

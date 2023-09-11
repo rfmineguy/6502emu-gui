@@ -192,6 +192,7 @@ namespace ImGuiLayer {
     }
     ImGui::Separator();
 
+    ImGui::BeginChild("ScrollArea");
     ImGuiListClipper clipper;
     clipper.Begin(Globals::Instance().instructions.size());
     
@@ -219,8 +220,9 @@ namespace ImGuiLayer {
         it ++;
       }
     }
+    ImGui::EndChild();
 
-    clipper.End();
+    // clipper.End();
     ImGui::End();
   }
 

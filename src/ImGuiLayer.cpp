@@ -6,6 +6,7 @@
 #include <fmt/core.h>
 #include <iostream>
 #include <sstream>
+#include <iterator>
 #include <nfd-src/src/include/nfd.hpp>
 
 #include <6502emu/cpu.h>
@@ -115,14 +116,17 @@ namespace ImGuiLayer {
 
   // Actual UI Rendering
   void ShowRegisters() {
+#define BYTE_BIT_FMT "%d%d%d%d%d%d%d%d"
+#define BYTE_BIT_ARG(x) (x) >> 7, (x) >> 6, (x) >> 5, (x) >> 4, (x) >> 3, (x) >> 2, (x) >> 1, (x) >> 0
     ImGui::Begin("Registers");
-      ImGui::Text("   A: %02X", Globals::Instance().cpu.regA);
-      ImGui::Text("   X: %02X", Globals::Instance().cpu.regX);
-      ImGui::Text("   Y: %02X", Globals::Instance().cpu.regY);
+      cpu_t cpu = Globals::Instance().cpu;
+      ImGui::Text("   A: %02X", cpu.regA);
+      ImGui::Text("   X: %02X", cpu.regX);
+      ImGui::Text("   Y: %02X", cpu.regY);
       ImGui::Separator();
-      ImGui::Text("  PC: %04X", Globals::Instance().cpu.pc);
+      ImGui::Text("  PC: %04X", cpu.pc);
       ImGui::Separator();
-      ImGui::Text("   Status: 0000-000");
+      ImGui::Text("   Status: " BYTE_BIT_FMT, BYTE_BIT_ARG(cpu.status_flags));
       ImGui::Text("   N: %d", 0);
     ImGui::End();
   }
@@ -175,14 +179,22 @@ namespace ImGuiLayer {
     } 
 
     static char hex[5];
+    static bool changed = false;
+    static uint16_t changed_to = 0;
     if (ImGui::InputText("addr_input", hex, 5, ImGuiInputTextFlags_CharsHexadecimal | ImGuiInputTextFlags_EnterReturnsTrue)) {
-      std::cout << "Submit" << std::endl;
+      size_t pos;
+      uint16_t val = std::stoi(std::string(hex), &pos, 16);
+      std::cout << "Submit: " << std::hex << val << std::endl;
+      changed = true;
+      changed_to = val;
+      float interval =  ImGui::GetScrollMaxY() / 0xffff;
+      ImGui::SetScrollY(interval * val);
     }
     ImGui::Separator();
 
     ImGuiListClipper clipper;
     clipper.Begin(Globals::Instance().instructions.size());
-
+    
     while (clipper.Step()) {
       auto it = Globals::Instance().instructions.begin();
       for (int i = 0; i < clipper.DisplayStart; i++) {
@@ -207,16 +219,8 @@ namespace ImGuiLayer {
         it ++;
       }
     }
-    clipper.End();
 
-    // for (int i = 0; i < 0xffff; i++) {
-    //   try {
-    //     instruction_t ins = Globals::Instance().instructions.at(i);
-    //     ImGui::Text("%02X%02X", ins.address & 0xff, ins.address & 0xff00);
-    //   } catch (...) {
-    //     ImGui::Text("");
-    //   }
-    // }
+    clipper.End();
     ImGui::End();
   }
 

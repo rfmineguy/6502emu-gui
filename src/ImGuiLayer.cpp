@@ -188,11 +188,15 @@ namespace ImGuiLayer {
       changed = true;
       changed_to = val;
       float interval =  ImGui::GetScrollMaxY() / 0xffff;
-      ImGui::SetScrollY(interval * val);
     }
     ImGui::Separator();
 
     ImGui::BeginChild("ScrollArea");
+    if (changed) {
+      float interval =  ImGui::GetScrollMaxY() / 0xffff;
+      ImGui::SetScrollY(interval * changed_to);
+      changed = false;
+    }
     ImGuiListClipper clipper;
     clipper.Begin(Globals::Instance().instructions.size());
     

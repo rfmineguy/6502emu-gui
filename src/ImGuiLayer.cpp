@@ -217,6 +217,12 @@ namespace ImGuiLayer {
           if (ins.address == Globals::Instance().cpu.pc)
             ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(160, 40, 40, 255));
           ImGui::SameLine(); ImGui::Text("%04X", it->first);
+          for (int i = 0; i < ins.bytes; i++) {
+            ImGui::SameLine(); ImGui::Text("%02X", ins.raw[i]);
+          }
+          for (int i = 0; i < 3 - ins.bytes; i++) {
+            ImGui::SameLine(); ImGui::Text("  ");
+          }
           ImGui::SameLine(); ImGui::Text("%s", ins.str);
           if (ins.address == Globals::Instance().cpu.pc)
             ImGui::PopStyleColor();
@@ -224,7 +230,21 @@ namespace ImGuiLayer {
         it ++;
       }
     }
+
     ImGui::EndChild();
+
+		{
+			ImVec2 vMin = ImGui::GetWindowContentRegionMin();
+			ImVec2 vMax = ImGui::GetWindowContentRegionMax();
+
+			vMin.x += ImGui::GetWindowPos().x;
+			vMin.y += ImGui::GetWindowPos().y;
+			vMax.x += ImGui::GetWindowPos().x;
+			vMax.y += ImGui::GetWindowPos().y;
+
+			// ImGui::GetForegroundDrawList()->AddRect( vMin, vMax, IM_COL32( 255, 255, 0, 255 ) );
+      ImGui::GetForegroundDrawList()->AddLine( ImVec2 {vMin.x + 60, vMin.y}, ImVec2 {vMin.x + 60, vMax.y}, IM_COL32(255, 0, 255, 255) );
+		}
 
     // clipper.End();
     ImGui::End();
